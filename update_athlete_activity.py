@@ -1,11 +1,9 @@
 # import sys; sys.path.append('/home/ec2-user/.local/lib/python3.6/site-packages/')
-# The first line of import is to make it run on AWS ec2.
+# The first line of import is to make it run on AWS ec2. 
 from stravalib import Client
 import pandas as pd
 import numpy as np
-# import schedule
-# import time
-# import csv
+
 from sqlalchemy import create_engine
 
 """
