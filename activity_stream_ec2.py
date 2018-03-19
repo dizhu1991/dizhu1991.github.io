@@ -15,7 +15,9 @@ import psycopg2
 from ratelimit import rate_limited # complying with rate limiting requirements
 
 """
-This file uploads .csv files that track detailed streams of an activity. 
+This file uploads .csv files of a user's activity streams to AWS S3. 
+Activity streams track the user's position,speed etc during an activity. 
+
 It is scheduled to run on ec2 periodically. The rate limiting problem has not been fully solved;
 although I use the Python library ratelimit to comply my code with rate limiting requirements, 
 sometimes it doesn't work and an error occurred.
