@@ -1,9 +1,3 @@
-
-# coding: utf-8
-
-# In[2]:
-
-
 # import sys; sys.path.append('/home/ec2-user/.local/lib/python3.6/site-packages/')
 # The first line of import is to make it run on AWS ec2
 from stravalib import Client
@@ -20,20 +14,27 @@ import psycopg2
 from ratelimit import rate_limited # complying with rate limiting requirements 
 
 
-# In[3]:
+"""
+This file generates .json files of segment streams and effort streams and uploads them to AWS S3 buckets. 
+
+Segments are normal for running and riding actitivities in Strava, and when a user passes through a segment of a track,
+segment streams are tracked. 
+
+Rate limiting problem has not been fully solved. I'm working on that.
+"""
 
 
 # 11 types of activity streams
 activity_stream_type = ["time", "latlng", "distance", "altitude", "velocity_smooth", "heartrate", "cadence", "watts", "temp", "moving", "grade_smooth"]
 
 
-# In[4]:
+
 
 
 # access the AWS S3
-ac_key = 'AKIAJLJ66OZ5EED6N73Q'
-secret_ac_key = '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'
-# hard-coded keys
+ac_key = 'ac_key'
+secret_ac_key = 'secret_key'
+# hard-coded keys, omitted
 
 session_me = boto3.Session(
     aws_access_key_id=ac_key,
@@ -48,8 +49,8 @@ s3s = session_me.resource('s3')
 # In[5]:
 
 
-# connect to the Postgresql server
-engine = create_engine('postgresql://dgadmin:d0YUKIujJ1pFKw90eSJ0@172.29.11.105:5432/athletes_home')
+# connect to the Postgresql server, server address omitted.
+engine = create_engine('sql')
 
 # pipeline: connect the S3 and postegresql server - get the token list - update the 
 # activities to the database - for every activity, update its stream to S3 buckets
@@ -58,9 +59,9 @@ engine = create_engine('postgresql://dgadmin:d0YUKIujJ1pFKw90eSJ0@172.29.11.105:
 # In[6]:
 
 
-# psycopg2 connection. I guess it's better to harmonise it with sqlalchemy engine, but for now it's fine.
+# psycopg2 connection. information is omitted here.
 
-conn = psycopg2.connect(host="172.29.11.105", database="athletes_home", user="dgadmin", password="d0YUKIujJ1pFKw90eSJ0")
+conn = psycopg2.connect(host="host", database="database", user="user", password="password")
 cur = conn.cursor()
 
 
@@ -114,7 +115,7 @@ def AcListUpdate(athlete_id): # athlete_id
     return ac_list
 
 
-# In[13]:
+
 
 
 a_quarter = 900 # 15 minutes
@@ -126,7 +127,7 @@ def AcListForSg(athlete_id): # athlete_id
     return ac_list
 
 
-# In[14]:
+
 
 
 a_quarter = 900 # 15 minutes
@@ -163,7 +164,7 @@ def UploadAc(client1, ac):
         return 0   
 
 
-# In[160]:
+
 
 
 a_quarter = 900 # 15 minutes
@@ -311,32 +312,15 @@ def UpdateTables(token): # update the tables based on access token of an athlete
             myframe.to_sql('stream_retrieved_or_not', engine, index=False, if_exists='append')
 
 
-# In[163]:
+
 
 
 for tk in token_list:
     UpdateTables(tk)
 
 
-# In[1]:
 
 
-list_test = [1,2,3,4,5,6]
-
-def real_test(a):
-    if a in list_test:
-        print("%d is in the list." %(a))
-    else: 
-        print("%d is not in the list." % (a))
-
-
-# In[2]:
-
-
-real_test(4)
-
-
-# In[3]:
 
 
 real_test(9)
